@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMSA COACHING</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#f5f5f5;padding-top:55px}
+#header{position:fixed;top:0;left:0;width:100%;height:55px;background:#1a3d7c;color:white;display:flex;align-items:center;padding:0 15px;z-index:1000}
+#menuBtn{font-size:26px;cursor:pointer;background:none;border:0;color:white;margin-right:12px}
+#header h2{font-size:18px}
+#sidebar{position:fixed;left:-260px;top:0;width:260px;height:100%;background:#2c3e50;transition:0.3s;z-index:1001;padding-top:60px;overflow:auto}
+#sidebar.open{left:0}
+#sidebar a{display:block;padding:14px 20px;color:white;text-decoration:none;cursor:pointer;border-bottom:1px solid #34495e}
+#sidebar a:hover{background:#34495e}
+#closeBtn{position:absolute;top:12px;right:15px;font-size:28px;cursor:pointer;color:white}
+
+/* LANDING */
+.banner{position:relative;text-align:center;color:white}
+.banner img{width:100%;height:280px;object-fit:cover}
+.banner-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:90%}
+.banner-text h1{font-size:24px;margin-bottom:8px;text-shadow:2px 2px 4px #000}
+.banner-text p{font-size:14px;margin-bottom:15px;text-shadow:1px 1px 3px #000}
+.admBtn{background:#ff6b00;color:white;padding:12px 25px;border:none;border-radius:6px;font-size:16px;font-weight:bold;cursor:pointer}
+
+.courses{padding:20px 15px}
+.courses h2{text-align:center;color:#1a3d7c;margin-bottom:20px;font-size:24px}
+.courseCard{background:white;padding:20px;border-radius:8px;margin:12px 0;text-align:center;box-shadow:0 2px 5px rgba(0,0,0,0.1);border-top:4px solid #1a3d7c}
+.courseCard h3{color:#1a3d7c;margin-bottom:10px}
+
+/* ERP */
+#content{padding:15px}
+.card{background:white;padding:15px;margin:12px 0;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1)}
+.batchBox{background:#e3f2fd;padding:12px;margin:8px 0;border-radius:6px;cursor:pointer;border:1px solid #90caf9}
+.btn{padding:8px 14px;border:none;border-radius:5px;cursor:pointer;margin:4px;font-size:14px}
+.btn-g{background:#27ae60;color:white}
+.btn-r{background:#e74c3c;color:white}
+.btn-b{background:#2980b9;color:white}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th{background:#1a3d7c;color:white;padding:8px}
+td{border:1px solid #ddd;padding:8px;text-align:center}
+input,select,textarea{width:100%;padding:8px;margin:6px 0;border:1px solid #ccc;border-radius:4px}
+.modal{display:none;position:fixed;z-index:2000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.6)}
+.modal-content{background:white;margin:5% auto;padding:20px;border-radius:8px;width:92%;max-width:500px;max-height:80vh;overflow:auto}
+.box{background:#fff3cd;padding:10px;margin:6px 0;border-radius:5px}
+.top5{color:#e67e22;font-weight:bold}
+h3{color:#1a3d7c;margin:8px 0 12px}
+h4{color:#333;margin:12px 0 6px}
+</style>
+</head>
+<body>
+
+<div id="header">
+  <button id="menuBtn" onclick="toggleMenu()">☰</button>
+  <h2 id="siteName">IMSA COACHING CLASSES</h2>
+</div>
+
+<div id="sidebar">
+  <span id="closeBtn" onclick="toggleMenu()">×</span>
+  <a onclick="show('homePage')">🏠 Home Page</a>
+  <a onclick="show('batches')">📦 Batches ERP</a>
+  <a onclick="show('att')">✅ Attendance</a>
+  <a onclick="show('prog')">📈 Progress</a>
+  <a onclick="show('marks')">📝 Test Marks</a>
+  <a onclick="show('top')">🏆 Top 5</a>
+  <a onclick="login()">⚙️ Owner Panel</a>
+</div>
+
+<div id="content">
+
+  <!-- HOME PAGE -->
+  <div id="homePage">
+    <div class="banner">
+      <img id="bannerImg" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800" alt="Banner">
+      <div class="banner-text">
+        <h1 id="bannerTitle">ADMISSION OPEN FROM CLASS 8 TO CLASS 10</h1>
+        <p id="bannerSub">10+ Saal Ka Experience | 500+ Students Selected</p>
+        <button class="admBtn" onclick="show('batches')">Admission Lo Abhi</button>
+      </div>
+    </div>
+
+    <div class="courses">
+      <h2 id="courseHead">Hamare Courses / Batches</h2>
+      <div id="courseList"></div>
+    </div>
+  </div>
+
+  <!-- ERP TABS -->
+  <div id="batches" class="card" style="display:none">
+    <h3>Saari Batches - Click karke select karo</h3>
+    <div id="batchList"></div>
+  </div>
+
+  <div id="att" class="card" style="display:none">
+    <h3 id="attHead">Attendance</h3>
+    <button class="btn btn-g" onclick="markAll(1)">Sab Present</button>
+    <button class="btn btn-r" onclick="markAll(0)">Sab Absent</button>
+    <table id="attTable"></table>
+  </div>
+
+  <div id="prog" class="card" style="display:none">
+    <h3 id="progHead">Progress %</h3>
+    <table id="progTable"></table>
+  </div>
+
+  <div id="marks" class="card" style="display:none">
+    <h3 id="marksHead">Test Marks /100</h3>
+    <table id="marksTable"></table>
+  </div>
+
+  <div id="top" class="card" style="display:none">
+    <h3 id="topHead">Top 5 Students</h3>
+    <table id="topTable"></table>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginBox" class="modal">
+  <div class="modal-content">
+    <h3>Owner Login</h3>
+    <input type="password" id="pwd" placeholder="Password: admin123">
+    <button class="btn btn-b" onclick="check()">Login</button>
+    <button class="btn btn-r" onclick="hide('loginBox')">Cancel</button>
+  </div>
+</div>
+
+<!-- OWNER PANEL -->
+<div id="ownerBox" class="modal">
+  <div class="modal-content">
+    <h3>⚙️ Owner Panel - Sab Kuch Edit Karo</h3>
+
+    <h4>1. Website Header + Banner</h4>
+    <input id="sName" placeholder="Coaching Ka Naam - Header me dikhega">
+    <input id="bTitle" placeholder="Banner Title - Bada Text">
+    <input id="bSub" placeholder="Banner Subtitle - Chota Text">
+    <input id="bImg" placeholder="Banner Image Link - URL paste karo">
+    <input id="cHead" placeholder="Courses Heading">
+    <input id="pwdNew" placeholder="Naya Password">
+
+    <h4>2. Batch Banao - Ye Home Page pe dikhega</h4>
+    <div id="batchManage"></div>
+    <input id="bName" placeholder="Batch Naam - Ex: NEET Morning 2027">
+    <input id="bTime" placeholder="Time - Ex: 7AM to 9AM">
+    <input id="bFees" placeholder="Fees - Ex: ₹45000/Year">
+    <textarea id="bDesc" placeholder="Description - Ex: Physics Chemistry Biology"></textarea>
+    <button class="btn btn-g" onclick="newBatch()">+ Batch Banao + Home pe dikhao</button>
+
+    <h4>3. Student Add/Edit</h4>
+    <select id="bSelect" onchange="loadOwner()"></select>
+    <div id="stuManage"></div>
+    <input id="sNameNew" placeholder="Student Naam">
+    <input id="sMarks" type="number" placeholder="Marks 0-100">
+    <input id="sProg" type="number" placeholder="Progress 0-100%">
+    <button class="btn btn-g" onclick="newStudent()">+ Student Add</button>
+
+    <button class="btn btn-b" onclick="saveAll()">💾 Sab Save Karo</button>
+    <button class="btn btn-r" onclick="hide('ownerBox')">Close</button>
+  </div>
+</div>
+
+<script>
+let db = JSON.parse(localStorage.getItem('imsaFinal')) || {
+  siteName:"IMSA COACHING CLASSES",
+  bannerTitle:"ADMISSION OPEN FROM CLASS 8 TO CLASS 10",
+  bannerSub:"10+ Saal Ka Experience | 500+ Students Selected",
+  bannerImg:"https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800",
+  courseHead:"Hamare Courses / Batches",
+  pwd:"admin123",
+  cur:0,
+  batches:[
+    {name:"NEET Morning 2027", time:"7AM-9AM", fees:"₹45000/Year", desc:"Physics, Chemistry, Biology", st:[{n:"Rahul", m:92, p:85, pr:1},{n:"Priya", m:88, p:80, pr:1}]},
+    {name:"JEE Evening Batch", time:"5PM-7PM", fees:"₹50000/Year", desc:"Maths, Physics, Chemistry", st:[{n:"Aman", m:75, p:70, pr:0},{n:"Sneha", m:95, p:90, pr:1}]}
+  ]
+};
+
+function save(){localStorage.setItem('imsaFinal',JSON.stringify(db))}
+
+function toggleMenu(){
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+function show(id){
+  if(id=='homePage'){
+    ['homePage','batches','att','prog','marks','top'].forEach(x=>document.getElementById(x).style.display='none');
+    document.getElementById('homePage').style.display='block';
+  } else {
+    document.getElementById('homePage').style.display='none';
+    ['batches','att','prog','marks','top'].forEach(x=>document.getElementById(x).style.display='none');
+    document.getElementById(id).style.display='block';
+    drawERP();
+  }
+  toggleMenu();
+}
+
+function drawERP(){
+  document.getElementById('siteName').innerText = db.siteName;
+  document.getElementById('bannerTitle').innerText = db.bannerTitle;
+  document.getElementById('bannerSub').innerText = db.bannerSub;
+  document.getElementById('bannerImg').src = db.bannerImg;
+  document.getElementById('courseHead').innerText = db.courseHead;
+
+  let b = db.batches[db.cur];
+  if(b){
+    document.getElementById('attHead').innerText = b.name + " Attendance";
+    document.getElementById('progHead').innerText = b.name + " Progress";
+    document.getElementById('marksHead').innerText = b.name + " Marks";
+    document.getElementById('topHead').innerText = b.name + " Top 5";
+
+    let bl = '';
+    db.batches.forEach((x,i)=>{
+      bl += `<div class="batchBox" onclick="sel(${i})">
+        <b>${x.name}</b><br>Time:${x.time} | Fees:${x.fees}
+      </div>`;
+    });
+    document.getElementById('batchList').innerHTML = bl;
+
+    let at = '<tr><th>Roll</th><th>Name</th><th>Status</th></tr>';
+    b.st.forEach((s,i)=>{
+      at += `<tr><td>${i+1}</td><td>${s.n}</td>
+      <td><button class="${s.pr?'btn-g':'btn-r'}" onclick="toggle(${i})">
+      ${s.pr?'Present':'Absent'}</button></td></tr>`;
+    });
+    document.getElementById('attTable').innerHTML = at;
+
+    let pt = '<tr><th>Name</th><th>Progress%</th></tr>';
+    b.st.forEach(s=>pt += `<tr><td>${s.n}</td><td>${s.p}%</td></tr>`);
+    document.getElementById('progTable').innerHTML = pt;
+
+    let mt = '<tr><th>Name</th><th>Marks/100</th></tr>';
+    b.st.forEach(s=>mt += `<tr><td>${s.n}</td><td>${s.m}</td></tr>`);
+    document.getElementById('marksTable').innerHTML = mt;
+
+    let sorted = [...b.st].sort((a,b)=>b.m-a.m).slice(0,5);
+    let tt = '<tr><th>Rank</th><th>Name</th><th>Marks</th></tr>';
+    sorted.forEach((s,i)=>tt += `<tr class="${i<3?'top5':''}"><td>${i+1}</td><td>${s.n}</td><td>${s.m}</td></tr>`);
+    document.getElementById('topTable').innerHTML = tt;
+  }
+
+  // HOME PAGE PE BATCH CARD DIKHANA
+  let cl = '';
+  db.batches.forEach(batch=>{
+    cl += `<div class="courseCard">
+      <h3>${batch.name}</h3>
+      <p>${batch.desc}</p>
+      <p><b>Fees: ${batch.fees}</b></p>
+      <p>Batch: ${batch.time}</p>
+      <p>Total Students: ${batch.st.length}</p>
+    </div>`;
+  });
+  document.getElementById('courseList').innerHTML = cl;
+}
+
+function sel(i){
+  db.cur = i;
+  save();
+  show('att');
+}
+
+function toggle(i){
+  db.batches[db.cur].st[i].pr = db.batches[db.cur].st[i].pr? 0 : 1;
+  save(); drawERP();
+}
+
+function markAll(v){
+  db.batches[db.cur].st.forEach(s=>s.pr=v);
+  save(); drawERP();
+}
+
+// OWNER
+function login(){
+  document.getElementById('loginBox').style.display='block';
+}
+
+function check(){
+  if(document.getElementById('pwd').value == db.pwd){
+    hide('loginBox');
+    document.getElementById('ownerBox').style.display='block';
+    loadOwner();
+  } else alert('Galat password bhai!');
+}
+
+function hide(id){
+  document.getElementById(id).style.display='none';
+}
+
+function loadOwner(){
+  document.getElementById('sName').value = db.siteName;
+  document.getElementById('bTitle').value = db.bannerTitle;
+  document.getElementById('bSub').value = db.bannerSub;
+  document.getElementById('bImg').value = db.bannerImg;
+  document.getElementById('cHead').value = db.courseHead;
+  document.getElementById('pwdNew').value = db.pwd;
+
+  let bm = '';
+  db.batches.forEach((b,i)=>{
+    bm += `<div class="box">${b.name}
+      <button class="btn btn-r" onclick="delB(${i})">Delete Batch</button></div>`;
+  });
+  document.getElementById('batchManage').innerHTML = bm;
+
+  let bs = '';
+  db.batches.forEach((b,i)=>{
+    bs += `<option value="${i}">${b.name}</option>`;
+  });
+  document.getElementById('bSelect').innerHTML = bs;
+  document.getElementById('bSelect').value = db.cur;
+
+  let sm = '';
+  db.batches[db.cur].st.forEach((s,i)=>{
+    sm += `<div class="box">${s.n} - ${s.m} marks
+      <button class="btn btn-r" onclick="delS(${i})">Delete</button></div>`;
+  });
+  document.getElementById('stuManage').innerHTML = sm;
+}
+
+function newBatch(){
+  let n = document.getElementById('bName').value;
+  let t = document.getElementById('bTime').value;
+  let f = document.getElementById('bFees').value;
+  let d = document.getElementById('bDesc').value;
+  if(n && t){
+    db.batches.push({name:n, time:t, fees:f||"₹0", desc:d||"No description", st:[]});
+    document.getElementById('bName').value='';
+    document.getElementById('bTime').value='';
+    document.getElementById('bFees').value='';
+    document.getElementById('bDesc').value='';
+    save(); loadOwner(); drawERP();
+    alert('Batch ban gayi! Ab Home Page pe dikh rahi hai ✅');
+  } else alert('Batch naam aur time likho bhai');
+}
+
+function delB(i){
+  if(confirm('Ye batch delete ho jayegi?')){
+    db.batches.splice(i,1);
+    if(db.cur>=db.batches.length) db.cur=0;
+    save(); loadOwner(); drawERP();
+  }
+}
+
+function newStudent(){
+  let bi = parseInt(document.getElementById('bSelect').value);
+  let n = document.getElementById('sNameNew').value;
+  let m = parseInt(document.getElementById('sMarks').value);
+  let p = parseInt(document.getElementById('sProg').value);
+  if(n &&!isNaN(m)){
+    db.batches[bi].st.push({n:n, m:m, p:p||0, pr:1});
+    document.getElementById('sNameNew').value='';
+    document.getElementById('sMarks').value='';
+    document.getElementById('sProg').value='';
+    save(); loadOwner(); drawERP();
+    alert('Student add ho gaya ✅');
+  }
+}
+
+function delS(i){
+  if(confirm('Student delete karega?')){
+    db.batches[db.cur].st.splice(i,1);
+    save(); loadOwner(); drawERP();
+  }
+}
+
+function saveAll(){
+  db.siteName = document.getElementById('sName').value;
+  db.bannerTitle = document.getElementById('bTitle').value;
+  db.bannerSub = document.getElementById('bSub').value;
+  db.bannerImg = document.getElementById('bImg').value;
+  db.courseHead = document.getElementById('cHead').value;
+  db.pwd = document.getElementById('pwdNew').value;
+  save(); drawERP();
+  alert('Sab save ho gaya! Naya password: '+db.pwd);
+}
+
+drawERP();
+</script>
+</body>
+</html>
