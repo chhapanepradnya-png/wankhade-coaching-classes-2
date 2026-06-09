@@ -1,3 +1,107 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMSA COACHING</title>
+<style>**{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:#e0e0e0;padding-top:55px}
+
+/* YEHI MAGIC HAI - Mobile frame bana diya */
+.wrapper{max-width:480px;margin:0 auto;background:#f5f5f5;min-height:100vh;box-shadow:0 0 20px rgba(0,0,0,0.2)}
+
+#header{height:55px;background:#1a3d7c;color:white;display:flex;align-items:center;padding:0 15px;position:sticky;top:0;z-index:999}
+#menuBtn{font-size:24px;background:none;border:none;color:white;margin-right:12px;cursor:pointer}
+#header h2{font-size:17px;font-weight:600}
+
+#sidebar{position:fixed;top:0;left:-260px;width:260px;height:100%;background:#2c3e50;z-index:1000;padding-top:60px;transition:left 0.3s}
+#sidebar.open{left:0}
+#sidebar a{display:block;color:white;padding:15px 20px;text-decoration:none;border-bottom:1px solid #34495e;font-size:15px}
+#closeBtn{position:absolute;top:10px;right:15px;font-size:28px;cursor:pointer;color:white}
+
+.banner{position:relative;margin:12px;border-radius:10px;overflow:hidden}
+.banner img{width:100%;height:170px;display:block;object-fit:cover;filter:brightness(0.7)}
+.banner-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;color:white;width:90%}
+.banner-text h1{font-size:18px;margin-bottom:5px;font-weight:bold}
+.banner-text p{font-size:12px;margin-bottom:10px}
+.admBtn{background:#ff6600;color:white;border:0;padding:10px 18px;border-radius:6px;font-size:14px;font-weight:bold;cursor:pointer}
+
+.courses{padding:15px 12px}
+.courses h2{font-size:18px;color:#1a3d7c;text-align:center;margin-bottom:15px;font-weight:bold}
+.courseCard{background:white;border:1px solid #e0e0e0;border-radius:8px;padding:15px;margin-bottom:10px;text-align:left}
+.courseCard h3{font-size:16px;color:#1a3d7c;margin-bottom:5px;font-weight:bold}
+.courseCard p{font-size:14px;color:#666;margin:4px 0}
+
+#content{padding:10px}
+.card{background:white;border:1px solid #e0e0e0;border-radius:8px;padding:15px;margin-bottom:12px}
+h3{font-size:17px;color:#1a3d7c;margin-bottom:12px}
+.batchBox{background:#f0f8ff;border:1px solid #cce5ff;padding:12px;margin:8px 0;border-radius:6px;cursor:pointer;font-size:14px}
+.btn{background:#007bff;color:white;border:0;padding:8px 14px;border-radius:4px;font-size:14px;cursor:pointer;margin:4px 3px;display:inline-block}
+.btn-g{background:#28a745}
+.btn-r{background:#dc3545}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+th,td{border:1px solid #ddd;padding:8px;text-align:center}
+th{background:#1a3d7c;color:white}
+input,select,textarea{width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;font-size:14px;margin:5px 0}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:2000}
+.modal-content{background:white;width:90%;max-width:480px;margin:40px auto;padding:20px;border-radius:8px;max-height:85vh;overflow-y:auto}
+.box{background:#fff3cd;padding:10px;margin:6px 0;border-left:3px solid #ffc107;border-radius:4px;font-size:14px}
+</style>
+</head>
+<body>
+  
+  <div class="mobile-frame">
+    
+  </div>
+
+<div id="header">
+  <button id="menuBtn" onclick="toggleMenu()">☰</button>
+  <h2 id="siteName">IMSA COACHING CLASSES</h2>
+</div>
+
+<div id="sidebar">
+  <span id="closeBtn" onclick="toggleMenu()">×</span>
+  <a onclick="show('homePage')">🏠 Home Page</a>
+  <a onclick="show('batches')">📦 Batches ERP</a>
+  <a onclick="show('att')">✅ Attendance</a>
+  <a onclick="show('prog')">📈 Progress</a>
+  <a onclick="show('marks')">📝 Test Marks</a>
+  <a onclick="show('top')">🏆 Top 5</a>
+  <a onclick="login()">⚙️ Owner Panel</a>
+</div>
+
+<div id="content">
+
+  <!-- HOME PAGE -->
+  <div id="homePage">
+    <div class="banner">
+      <img id="bannerImg" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800" alt="Banner">
+      <div class="banner-text">
+        <h1 id="bannerTitle">ADMISSION OPEN FROM CLASS 8 TO CLASS 10</h1>
+        <p id="bannerSub">10+ Saal Ka Experience | 500+ Students Selected</p>
+        <button class="admBtn" onclick="show('batches')">Admission Lo Abhi</button>
+      </div>
+    </div>
+
+    <div class="courses">
+      <h2 id="courseHead">Hamare Courses / Batches</h2>
+      <div id="courseList"></div>
+    </div>
+  </div>
+
+  <!-- ERP TABS -->
+  <div id="batches" class="card" style="display:none">
+    <h3>Saari Batches - Click karke select karo</h3>
+    <div id="batchList"></div>
+  </div>
+
+  <div id="att" class="card" style="display:none">
+    <h3 id="attHead">Attendance</h3>
+    <button class="btn btn-g" onclick="markAll(1)">Sab Present</button>
+    <button class="btn btn-r" onclick="markAll(0)">Sab Absent</button>
+    <table id="attTable"></table>
+  </div>
+
   <div id="prog" class="card" style="display:none">
     <h3 id="progHead">Progress %</h3>
     <table id="progTable"></table>
@@ -18,7 +122,7 @@
 <div id="loginBox" class="modal">
   <div class="modal-content">
     <h3>Owner Login</h3>
-      <input type="password" id="pwd" placeholder="Password: sunny123">
+    <input type="password" id="pwd" placeholder="Password: admin123">
     <button class="btn btn-b" onclick="check()">Login</button>
     <button class="btn btn-r" onclick="hide('loginBox')">Cancel</button>
   </div>
@@ -65,7 +169,7 @@ let db = JSON.parse(localStorage.getItem('imsaFinal')) || {
   bannerSub:"10+ Saal Ka Experience | 500+ Students Selected",
   bannerImg:"https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800",
   courseHead:"Hamare Courses / Batches",
-  pwd:"sunny123",
+  pwd:"admin123",
   cur:0,
   batches:[
     {name:"NEET Morning 2027", time:"7AM-9AM", fees:"₹45000/Year", desc:"Physics, Chemistry, Biology", st:[{n:"Rahul", m:92, p:85, pr:1},{n:"Priya", m:88, p:80, pr:1}]},
@@ -273,4 +377,4 @@ function saveAll(){
 drawERP();
 </script>
 </body>
-</html>
+          </html>
